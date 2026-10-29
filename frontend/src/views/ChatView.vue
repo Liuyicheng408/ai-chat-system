@@ -83,7 +83,10 @@ function startRename(c) {
   editingTitle.value = c.title
   nextTick(() => {
     const input = document.querySelector('.conv-rename input')
-    input && input.focus()
+    if (input) {
+      input.focus()
+      input.select() // 进入编辑即全选，直接输入即可替换
+    }
   })
 }
 
@@ -113,13 +116,10 @@ async function onCommand(cmd, c) {
 }
 
 async function onModelChange(id) {
-  if (!store.activeId) {
-    store.models = store.models
-    return
-  }
   try {
     await store.switchModel(id)
-    ElMessage.success('已切换模型：' + (store.models.find((m) => m.id === id)?.name || id))
+    const name = store.models.find((m) => m.id === id)?.name || id
+    ElMessage.success(store.activeId ? '已切换模型：' + name : '已选择模型：' + name + '，发送消息后生效')
   } catch (e) { /* ignore */ }
 }
 

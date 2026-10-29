@@ -22,6 +22,18 @@ def _sse(payload: dict) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
+def _delete_reply(message_id: int) -> None:
+    """生成失败且没有任何内容时，删掉这条空回复，避免污染历史记录。"""
+    db = SessionLocal()
+    try:
+        msg = db.get(Message, message_id)
+        if msg is not None:
+            db.delete(msg)
+            db.commit()
+    finally:
+        db.close()
+
+
 def _save_reply(message_id: int, content: str, tokens: int | None = None) -> None:
     db = SessionLocal()
     try:
@@ -73,6 +85,8 @@ async def chat_stream(
         for m in reversed(rows)
         if m.role in ("user", "assistant") and m.content
     ]
+    if settings.system_prompt:
+        messages.insert(0, {"role": "system", "content": settings.system_prompt})
 
     assistant = Message(conversation_id=conv.id, role="assistant", content="", model_id=model_id)
     db.add(assistant)
@@ -83,6 +97,7 @@ async def chat_stream(
 
     async def event_stream():
         chunks: list[str] = []
+        error_text = ""
         yield _sse({"type": "start", "message_id": assistant_id, "model": model_id})
         try:
             if model_id != "remote":
@@ -103,9 +118,14 @@ async def chat_stream(
             else:
                 yield _sse({"type": "error", "message": "模型没有返回任何内容"})
         except Exception as exc:  # noqa: BLE001
-            yield _sse({"type": "error", "message": str(exc)})
+            error_text = str(exc)
+            yield _sse({"type": "error", "message": error_text})
         finally:
-            await asyncio.to_thread(_save_reply, assistant_id, "".join(chunks))
+            text = "".join(chunks)
+            if not text and error_text:
+                await asyncio.to_thread(_delete_reply, assistant_id)
+            else:
+                await asyncio.to_thread(_save_reply, assistant_id, text)
 
     return StreamingResponse(
         event_stream(),

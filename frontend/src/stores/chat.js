@@ -6,13 +6,14 @@ export const useChatStore = defineStore('chat', {
     models: [],
     conversations: [],
     activeId: null,
+    pendingModel: '',
     messages: [],
     loadingMessages: false,
   }),
   getters: {
     activeConversation: (s) => s.conversations.find((c) => c.id === s.activeId) || null,
     currentModelId() {
-      return this.activeConversation?.model_id || this.models[0]?.id || 'remote'
+      return this.activeConversation?.model_id || this.pendingModel || this.models[0]?.id || 'remote'
     },
     currentModel() {
       return this.models.find((m) => m.id === this.currentModelId) || null
@@ -53,7 +54,11 @@ export const useChatStore = defineStore('chat', {
     },
     async switchModel(modelId) {
       const id = this.activeId
-      if (!id) return
+      if (!id) {
+        // 还没有会话时先记住选择，新建会话会带上它
+        this.pendingModel = modelId
+        return
+      }
       const res = await api.patchConversation(id, { model_id: modelId })
       const idx = this.conversations.findIndex((c) => c.id === id)
       if (idx >= 0) this.conversations[idx] = res.data

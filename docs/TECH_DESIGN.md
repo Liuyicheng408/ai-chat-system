@@ -11,7 +11,7 @@
 | 路由 | Vue Router | 4.5.x | 标准方案 |
 | HTTP | Axios | 1.7.x | 拦截器统一处理 Token 与错误 |
 | Markdown | markdown-it + highlight.js | — | 渲染 + 代码高亮 |
-| 加密 | jsencrypt | 3.3.x | 前端 RSA 公钥加密密码 |
+| 加密 | WebCrypto | 浏览器原生 | RSA-OAEP(SHA-256) 加密密码，免依赖 |
 | 后端框架 | FastAPI | 0.115.x | 异步、自带 OpenAPI 文档、SSE 友好 |
 | ASGI | Uvicorn | 0.34.x | 标准部署 |
 | ORM | SQLAlchemy | 2.0.x | 参数化查询防注入 |

@@ -95,9 +95,12 @@ async function submit() {
               v-model="form.username"
               placeholder="请输入用户名"
               size="large"
-              :prefix-icon="'User'"
               autocomplete="username"
-            />
+            >
+              <template #prefix>
+                <el-icon><User /></el-icon>
+              </template>
+            </el-input>
 
             <template v-if="isRegister">
               <label class="field-label">昵称（可选）</label>

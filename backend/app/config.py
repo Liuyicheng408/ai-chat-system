@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     max_new_tokens: int = 1024
     temperature: float = 0.7
     local_base_model: str = ""
+    system_prompt: str = "你是一个乐于助人的中文 AI 助手。回答准确、简洁，涉及代码时给出可运行的示例。"
 
     # 远端模型（OpenAI 兼容）
     remote_base_url: str = "https://api.deepseek.com/v1"
