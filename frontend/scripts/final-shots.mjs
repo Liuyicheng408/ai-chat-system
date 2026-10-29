@@ -19,7 +19,7 @@ await page.type('input[autocomplete="username"]', 'student')
 await page.type('input[autocomplete="current-password"]', 'Passw0rd123')
 await page.click('.submit-btn')
 await page.waitForFunction(() => location.pathname === '/', { timeout: 20000 })
-await wait(1500)
+await wait(4200)
 await page.screenshot({ path: SHOTS + 'final-chat.png' })
 
 await page.evaluate(() => localStorage.setItem('theme', 'dark'))

@@ -85,8 +85,29 @@
 | 1 | 0.5B 模型多轮记忆弱 | 追问「刚才的数字」答非所问 | 小模型能力限制，非逻辑缺陷；上下文已正确传入 |
 | 2 | Element Plus 下拉项需真实鼠标事件 | 自动化脚本用合成 click 无效 | 测试脚本改用 mouse.click，非产品问题 |
 
+---
+
+## 2026-10-29 第三轮：接入 MySQL
+
+### 环境切换
+- 数据库：SQLite → **MySQL 5.7.14**（库 `ai_chat`，字符集 utf8mb4 / utf8mb4_unicode_ci）
+- 建库脚本：`backend/scripts/init_db.py`（自动创建库 + 表）
+
+### 验证
+| 用例 | 结果 |
+|---|---|
+| 建库建表 | ✅ users / conversations / messages 三张表，InnoDB + utf8mb4 |
+| 注册并登录 | ✅ |
+| 密码存储 | ✅ `$2b$12$` 开头、60 字符 bcrypt，无明文 |
+| 中文写入读取 | ✅ 「用三句话介绍一下杭州的历史和特色」16 字符原样存取 |
+| 本地模型流式对话 | ✅ 回复 42 字正常入库，messages.model_id 记录正确 |
+| 会话标题自动生成 | ✅ |
+
+### 备注
+- 表 DDL 由 SQLAlchemy 生成；时间字段为 Python 侧 UTC 默认值，不依赖 MySQL 的 `ON UPDATE`，避免时区混乱
+- `.env` 中保留 SQLite 注释行，无 MySQL 时可一行切回
+
 ### 待办
-- [ ] 接入 MySQL（需 root 密码）
 - [ ] 接入用户自己的 LoRA / pt 模型
 - [ ] 配置远端 API Key 并联调
-- [ ] 部署到 Cloudflare Pages
+- [ ] 推送 GitHub 并部署到 Cloudflare Pages / Vercel
