@@ -1,6 +1,6 @@
 """流式对话接口（SSE）。"""
-import asyncio
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
@@ -15,6 +15,7 @@ from ..models import Conversation, Message, User, utcnow
 from ..resp import ok
 from ..schemas import ChatIn
 
+log = logging.getLogger("app.chat")
 router = APIRouter(prefix="/api/chat", tags=["对话"])
 
 
@@ -97,7 +98,6 @@ async def chat_stream(
 
     async def event_stream():
         chunks: list[str] = []
-        error_text = ""
         yield _sse({"type": "start", "message_id": assistant_id, "model": model_id})
         try:
             if model_id != "remote":
@@ -118,14 +118,18 @@ async def chat_stream(
             else:
                 yield _sse({"type": "error", "message": "模型没有返回任何内容"})
         except Exception as exc:  # noqa: BLE001
-            error_text = str(exc)
-            yield _sse({"type": "error", "message": error_text})
+            yield _sse({"type": "error", "message": str(exc)})
         finally:
+            # 客户端中断时生成器可能被取消，此处不能用 await：
+            # 取消后 await 会立刻抛 CancelledError，导致半截回复丢失。
             text = "".join(chunks)
-            if not text and error_text:
-                await asyncio.to_thread(_delete_reply, assistant_id)
-            else:
-                await asyncio.to_thread(_save_reply, assistant_id, text)
+            try:
+                if text:
+                    _save_reply(assistant_id, text)
+                else:
+                    _delete_reply(assistant_id)
+            except Exception:  # noqa: BLE001
+                log.exception("保存回复失败 message_id=%s", assistant_id)
 
     return StreamingResponse(
         event_stream(),

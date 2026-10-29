@@ -19,6 +19,7 @@ const scrollRef = ref(null)
 const inputRef = ref(null)
 const editingId = ref(null)
 const editingTitle = ref('')
+const sidebarOpen = ref(false)
 let controller = null
 
 const suggestions = [
@@ -62,6 +63,7 @@ onMounted(async () => {
 })
 
 async function onNewChat() {
+  sidebarOpen.value = false
   try {
     await store.createConversation(store.currentModelId)
     draft.value = ''
@@ -71,6 +73,7 @@ async function onNewChat() {
 }
 
 async function onSelect(id) {
+  sidebarOpen.value = false
   if (editingId.value) return
   if (id === store.activeId) return
   await store.selectConversation(id)
@@ -241,7 +244,11 @@ watch(
 
 <template>
   <div class="chat-page">
-    <aside class="sidebar">
+    <transition name="fade">
+      <div v-if="sidebarOpen" class="scrim" @click="sidebarOpen = false"></div>
+    </transition>
+
+    <aside :class="['sidebar', { open: sidebarOpen }]">
       <div class="brand">
         <span class="logo">智</span>
         <div class="brand-text">
@@ -333,6 +340,9 @@ watch(
 
     <main class="main">
       <header class="topbar">
+        <button class="menu-btn" aria-label="打开会话列表" @click="sidebarOpen = true">
+          <el-icon><Menu /></el-icon>
+        </button>
         <div class="top-title">
           <span class="dot-live"></span>
           {{ store.activeConversation?.title || '新对话' }}
@@ -805,27 +815,78 @@ watch(
   }
 }
 
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--text-2);
+  cursor: pointer;
+  margin-right: 10px;
+  flex: none;
+}
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 18, 0.5);
+  z-index: 55;
+  backdrop-filter: blur(2px);
+}
+
 @media (max-width: 820px) {
   .sidebar {
-    width: 76px;
-    padding: 16px 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 282px;
+    z-index: 60;
+    transform: translateX(-100%);
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   }
-  .brand-text,
-  .new-chat span,
-  .conv-label,
-  .conv-title,
-  .conv-meta,
-  .user-info {
-    display: none;
+  .sidebar.open {
+    transform: none;
   }
-  .new-chat {
-    padding: 11px 0;
-  }
-  .conv-item {
-    justify-content: center;
+  .menu-btn {
+    display: inline-flex;
   }
   .topbar {
-    padding: 0 14px;
+    padding: 0 12px;
+  }
+  .top-title {
+    font-size: 13px;
+    flex: 1;
+  }
+  .model-select {
+    width: 150px;
+  }
+  .messages {
+    padding: 18px 12px 8px;
+  }
+  .composer {
+    padding: 8px 12px 12px;
+  }
+  .msg-main {
+    max-width: 84%;
+  }
+}
+
+@media (max-width: 520px) {
+  .top-title {
+    display: none;
+  }
+  .model-select {
+    width: 170px;
+    margin-left: auto;
+  }
+  .composer-bar {
+    flex-wrap: wrap;
+    gap: 6px;
   }
 }
 </style>
