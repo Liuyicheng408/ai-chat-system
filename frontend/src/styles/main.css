@@ -1,0 +1,208 @@
+:root {
+  --bg: #f5f6fa;
+  --bg-soft: #eef0f7;
+  --panel: #ffffff;
+  --panel-2: #f7f8fc;
+  --text: #1d2130;
+  --text-2: #6b7280;
+  --text-3: #9aa1b1;
+  --border: #e6e8f0;
+  --primary: #6366f1;
+  --primary-2: #8b5cf6;
+  --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #a855f7 100%);
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius: 14px;
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --shadow: 0 8px 30px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 20px 60px rgba(76, 29, 149, 0.18);
+}
+
+html.dark {
+  --bg: #0d0f16;
+  --bg-soft: #141824;
+  --panel: #171b26;
+  --panel-2: #1d2230;
+  --text: #e8eaf2;
+  --text-2: #9aa2b6;
+  --text-3: #6b7488;
+  --border: #262c3a;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-3);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Element Plus 主题适配 ---------- */
+:root {
+  --el-color-primary: #6366f1;
+  --el-color-primary-light-3: #8b8ff5;
+  --el-color-primary-light-5: #a5a8f8;
+  --el-color-primary-light-7: #c4c6fb;
+  --el-color-primary-light-8: #d6d8fc;
+  --el-color-primary-light-9: #eceefd;
+  --el-color-primary-dark-2: #4f52c9;
+  --el-border-radius-base: 10px;
+  --el-font-size-base: 14px;
+}
+
+html.dark {
+  --el-bg-color: #171b26;
+  --el-bg-color-overlay: #1d2230;
+  --el-fill-color-blank: #171b26;
+  --el-text-color-primary: #e8eaf2;
+  --el-text-color-regular: #c3c9d8;
+  --el-border-color: #262c3a;
+  --el-border-color-light: #262c3a;
+  --el-border-color-lighter: #222838;
+  --el-fill-color-light: #1d2230;
+  --el-color-primary: #818cf8;
+}
+
+.el-button {
+  font-weight: 500;
+}
+
+.el-input__wrapper,
+.el-textarea__inner {
+  border-radius: 10px;
+}
+
+/* ---------- 通用 ---------- */
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* ---------- Markdown ---------- */
+.markdown-body {
+  font-size: 15px;
+  line-height: 1.75;
+  word-break: break-word;
+}
+.markdown-body p {
+  margin: 0 0 10px;
+}
+.markdown-body p:last-child {
+  margin-bottom: 0;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  margin: 16px 0 8px;
+  line-height: 1.4;
+}
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+.markdown-body code {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+html.dark .markdown-body code {
+  color: #a5b4fc;
+  background: rgba(129, 140, 248, 0.15);
+}
+.markdown-body pre {
+  background: #16181f;
+  color: #e6e6e6;
+  padding: 14px 16px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 10px 0;
+  position: relative;
+}
+.markdown-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 13px;
+}
+.markdown-body blockquote {
+  border-left: 3px solid var(--primary);
+  margin: 8px 0;
+  padding: 2px 12px;
+  color: var(--text-2);
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+.markdown-body table {
+  border-collapse: collapse;
+  margin: 10px 0;
+  width: 100%;
+  font-size: 13px;
+}
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--border);
+  padding: 7px 10px;
+  text-align: left;
+}
+.markdown-body th {
+  background: var(--panel-2);
+}
+.markdown-body a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.markdown-body a:hover {
+  text-decoration: underline;
+}
